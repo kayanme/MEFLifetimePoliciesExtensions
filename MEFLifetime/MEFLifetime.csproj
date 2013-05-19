@@ -58,8 +58,9 @@
     <Compile Include="Transaction\TransactionStorage.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="MEFLifetime.nuspec" />
+    <None Include="MEFLifetime.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

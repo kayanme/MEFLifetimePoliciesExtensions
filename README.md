@@ -2,7 +2,7 @@ This is simple MEF extension for scoping part in non-standart, but useful way (i
 
 To use this extensions, do the following:
 1. Add the whole assembly to the container catalog.
-2. Use ThreadPolicy<TYourType> (for example) in constructor or property injection to compose part of TYourType in desired scope.
+2. Use ThreadPolicy &lt;TYourType&gt; (for example) in constructor or property injection to compose part of TYourType in desired scope.
    Mention, that the part must be non-shared (just to have sense for scoping).
 
 The lifetime of part is controlled only by affinity and your usage - when thread and scope dies and all references to your object are gone, 
@@ -15,7 +15,7 @@ class Outer
 {
 
   [Import]
-  ThreadPolicy<Inner> _perThreadObject;
+  ThreadPolicy &lt;Inner&gt; _perThreadObject;
   ...
 }
 
@@ -28,7 +28,7 @@ class Outer
   Inner __perThreadObject;
 
   [ImportingConstructor]
-  Outer([Import]ThreadPolicy<Inner> perThreadObject)
+  Outer([Import]ThreadPolicy &lt;Inner&gt; perThreadObject)
   {
       _perThreadObject = perThreadObject; //yes,there is implicit conversion
   }

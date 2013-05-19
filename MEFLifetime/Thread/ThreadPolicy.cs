@@ -1,20 +1,31 @@
-﻿using System.ComponentModel.Composition.Extensions.MefPolicies;
-using System.ComponentModel.Composition.Extensions.Thread;
-using System.Threading;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace System.ComponentModel.Composition.Extensions
 {             
 
-    [Export(typeof (ThreadPolicy<>))]
-    [Export(typeof (IDisposable))]
+    [Export(typeof (ThreadPolicy<>))]  
     [PartCreationPolicy(CreationPolicy.NonShared)]
-    internal sealed class ThreadPolicy<T> : Policy<T, Thread> where T : class
+    public sealed class ThreadPolicy<T> : Policy<T, Thread> where T : class
     {
-        private Thread thread;
+        
         protected override Thread GetAffinity()
         {
-            return thread;
+            return Thread.CurrentThread;
         }
+
+        private void Tt(Thread thread)
+        {         
+            thread.Join();
+            DestroyAffinity(thread); 
+        }
+
+        protected override void OnInitialize(T obj)
+        {
+            var thread = Thread.CurrentThread;
+            new Thread(()=> Tt(thread)).Start();
+          
+        }                      
 
         [ImportingConstructor]
         internal ThreadPolicy(
@@ -22,7 +33,7 @@ namespace System.ComponentModel.Composition.Extensions
             ThreadStorage<T> storage)
             : base(storage)
         {
-           thread = Thread.CurrentThread;
+          
         }
     }
 

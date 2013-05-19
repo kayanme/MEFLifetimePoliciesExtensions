@@ -3,7 +3,7 @@
 namespace System.ComponentModel.Composition.Extensions
 {
 
-    public abstract class Policy<T, TAffinity> :IDisposable where T : class
+    public abstract class Policy<T, TAffinity>  where T : class
     {
 
         private T GetExportedValue()
@@ -16,7 +16,7 @@ namespace System.ComponentModel.Composition.Extensions
 
         [Import(AllowRecomposition = true, RequiredCreationPolicy = CreationPolicy.NonShared)]
         private Lazy<T> _lazyPart;
-
+        
         private bool _wasCreated;       
 
         protected abstract TAffinity GetAffinity();
@@ -38,20 +38,16 @@ namespace System.ComponentModel.Composition.Extensions
 
         private int _wasDisposed;
 
-        public void Dispose()
+        protected void DestroyAffinity(TAffinity affinity)
         {
             var wasDisposed = Interlocked.CompareExchange(ref _wasDisposed, 1, 0);
             if (_wasCreated && wasDisposed == 0)
             {
-                _storage.RemoveAffinity(GetAffinity());   
-                GC.SuppressFinalize(this);
-            }
+                _storage.RemoveAffinity(affinity);              
+            } 
         }
 
-        ~Policy()
-        {
-           Dispose();
-        }
+      
       
     }
 }

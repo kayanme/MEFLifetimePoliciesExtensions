@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MEF Lifetime Extensions")]
-[assembly: AssemblyDescription("A set of extensions, which provdes custom scoping")]
+[assembly: AssemblyTitle("MEFLifetime.Test")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Kayan")]
-[assembly: AssemblyProduct("MEF Lifetime Extensions")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("MEFLifetime.Test")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("31e07974-b436-4931-bd5f-9e72ae6013c6")]
+[assembly: Guid("64caf611-51f5-43c3-a18c-2886c3a4e48b")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -34,4 +34,3 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly:InternalsVisibleTo("MEFLifetime.Test")]

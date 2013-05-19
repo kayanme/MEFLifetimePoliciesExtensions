@@ -3,18 +3,21 @@
 namespace System.ComponentModel.Composition.Extensions
 {
 
-    [Export(typeof(ThreadPolicy<>))]
-    [Export(typeof(IDisposable))]
+    [Export(typeof(TransactionPolicy<>))]   
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public sealed class TransactionPolicy<T>:Policy<T,Transaction> where T:class
     {
         [ImportingConstructor]
-        public TransactionPolicy(AffinityStorage<T, Transaction> storage) : base(storage)
+        internal TransactionPolicy(
+            [Import(RequiredCreationPolicy = CreationPolicy.Shared)] 
+            TransactionStorage<T> storage) : base(storage)
         {
         }
 
         protected override Transaction GetAffinity()
         {
+            if (Transaction.Current == null)
+                throw new InvalidOperationException();
             return Transaction.Current;
         }
 
@@ -27,7 +30,8 @@ namespace System.ComponentModel.Composition.Extensions
 
         void Current_TransactionCompleted(object sender, TransactionEventArgs e)
         {
-            Dispose();
+            DestroyAffinity(e.Transaction);
+            e.Transaction.TransactionCompleted -=Current_TransactionCompleted;
         }
     }
 }

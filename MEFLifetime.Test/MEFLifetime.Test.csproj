@@ -53,9 +53,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CollectorClass.cs" />
-    <Compile Include="TransactionTest.cs" />
-    <Compile Include="TestPart.cs" />
     <Compile Include="ThreadTest.cs" />
+    <Compile Include="TestPart.cs" />
+    <Compile Include="TransactionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

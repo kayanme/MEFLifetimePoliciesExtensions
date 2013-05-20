@@ -3,6 +3,12 @@
 namespace System.ComponentModel.Composition.Extensions
 {
 
+    /// <summary>
+    /// Returns a part bound to current transaction. 
+    /// If one does not exists, throws <exception cref="InvalidOperationException">error</exception>.
+    /// If the part implements IEnlistmentNotification or ISinglePhaseNotification, enlist this part in transaction.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     [Export(typeof(TransactionPolicy<>))]   
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public sealed class TransactionPolicy<T>:Policy<T,Transaction> where T:class
@@ -25,6 +31,8 @@ namespace System.ComponentModel.Composition.Extensions
         {
             if (obj is ISinglePhaseNotification)
                 Transaction.Current.EnlistVolatile(obj as ISinglePhaseNotification,EnlistmentOptions.None);
+            if (obj is IEnlistmentNotification)
+                Transaction.Current.EnlistVolatile(obj as IEnlistmentNotification, EnlistmentOptions.None);
             Transaction.Current.TransactionCompleted += Current_TransactionCompleted;
         }
 

@@ -11,8 +11,8 @@
     <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Per-all scoping.</releaseNotes>
+    <releaseNotes>Per-call scoping.</releaseNotes>
     <copyright>Copyright 2013</copyright>
     <tags>MEF IO Lifetime</tags>
-  </metadata>
+  </metadata>  
 </package>

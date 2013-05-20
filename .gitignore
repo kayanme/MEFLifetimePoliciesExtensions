@@ -163,3 +163,4 @@ pip-log.txt
 .DS_Store
 .nbehave/plugin.config
 MEFLifetime/NuGet.exe
+*.nupkg

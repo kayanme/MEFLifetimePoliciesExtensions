@@ -2,8 +2,12 @@
 using System.Threading.Tasks;
 
 namespace System.ComponentModel.Composition.Extensions
-{             
+{
 
+    /// <summary>
+    /// Returns a part bound to calling thread.
+    /// </summary>
+    /// <typeparam name="T">Export type</typeparam>
     [Export(typeof (ThreadPolicy<>))]  
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public sealed class ThreadPolicy<T> : Policy<T, Thread> where T : class
@@ -14,7 +18,7 @@ namespace System.ComponentModel.Composition.Extensions
             return Thread.CurrentThread;
         }
 
-        private void Tt(Thread thread)
+        private void KillThread(Thread thread)
         {         
             thread.Join();
             DestroyAffinity(thread); 
@@ -23,8 +27,7 @@ namespace System.ComponentModel.Composition.Extensions
         protected override void OnInitialize(T obj)
         {
             var thread = Thread.CurrentThread;
-            new Thread(()=> Tt(thread)).Start();
-          
+            new Thread(() => KillThread(thread)).Start();          
         }                      
 
         [ImportingConstructor]

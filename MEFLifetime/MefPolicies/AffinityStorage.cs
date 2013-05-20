@@ -2,12 +2,25 @@
 
 namespace System.ComponentModel.Composition.Extensions
 {
-    public abstract class AffinityStorage<T, TAffinity> where T : class
+    /// <summary>
+    /// Abstract storage for context-bound part.
+    /// Override with partially-closed generic with defined TAffinity.
+    /// </summary>
+    /// <typeparam name="TExport">Export type.</typeparam>
+    /// <typeparam name="TAffinity">The type of the affinity.</typeparam>
+    public abstract class AffinityStorage<TExport, TAffinity> where TExport : class
     {        
-        private ConcurrentDictionary<TAffinity,T> _objects
-            = new ConcurrentDictionary<TAffinity,T>();
+        private ConcurrentDictionary<TAffinity,TExport> _objects
+            = new ConcurrentDictionary<TAffinity,TExport>();
 
-        internal T GetOrAdd(TAffinity affinity, Func<T> creator,Action<T> onInitialize)
+        /// <summary>
+        /// Get part for context or create and associate a new one.
+        /// </summary>
+        /// <param name="affinity">Context.</param>
+        /// <param name="creator">Creation method for part.</param>
+        /// <param name="onInitialize">Initialization hook.</param>
+        /// <returns></returns>
+        internal TExport GetOrAdd(TAffinity affinity, Func<TExport> creator,Action<TExport> onInitialize)
         {
             var t = _objects.GetOrAdd(affinity, (a) =>
                                                     {
@@ -18,9 +31,13 @@ namespace System.ComponentModel.Composition.Extensions
             return t;
         }
 
+        /// <summary>
+        /// Removes the affinity.
+        /// </summary>
+        /// <param name="affinity">Context.</param>
         internal void RemoveAffinity(TAffinity affinity)
         {
-            T val;
+            TExport val;
            _objects.TryRemove(affinity, out val);
         }
     }

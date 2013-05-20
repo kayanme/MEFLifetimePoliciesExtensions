@@ -3,13 +3,12 @@ using System.ComponentModel.Composition.Extensions;
 using System.ComponentModel.Composition.Hosting;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Transactions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MEFLifetime.Test
 {
     [TestClass]
-    public class TransactionTest
+    public class ThreadTest
     {
         private CompositionContainer _container;
 
@@ -19,70 +18,50 @@ namespace MEFLifetime.Test
         public void Initialize()
         {
             _container = new CompositionContainer(
-                new TypeCatalog(typeof(TestPart), typeof(CollectorClass), typeof(TransactionPolicy<>),
-                                typeof (TransactionStorage<>))
+                new TypeCatalog(typeof (TestPart), typeof (CollectorClass), typeof (ThreadPolicy<>),
+                                typeof (ThreadStorage<>))
                 );
             _collector = _container.GetExportedValue<CollectorClass>();
         }
 
         [TestMethod]
-        public void SingleTransactionOneTake()
+        public void SingleThreadOneTake()
         {
-            using (new TransactionScope())
-            {
-                TestPart part = _container.GetExportedValue<TransactionPolicy<TestPart>>();
-            }
+            TestPart part = _container.GetExportedValue<ThreadPolicy<TestPart>>();
             Assert.AreEqual(1, _collector.PartCount);
         }
 
         [TestMethod]
-        public void SingleTransactionTwoTakes()
+        public void SingleThreadTwoTakes()
         {
-            TestPart part;
-            TestPart part2;
-            using (new TransactionScope())
-            {
-                part = _container.GetExportedValue<TransactionPolicy<TestPart>>();
-                part2 = _container.GetExportedValue<TransactionPolicy<TestPart>>();
-               
-            }           
+            TestPart part = _container.GetExportedValue<ThreadPolicy<TestPart>>();
+            TestPart part2 = _container.GetExportedValue<ThreadPolicy<TestPart>>();
             Assert.AreSame(part, part2);
             Assert.AreEqual(1, _collector.PartCount);
         }
 
         [TestMethod]
-        public void TwoTransactionsTwoTakes()
+        public void TwoThreadsTwoTakes()
         {
-            TestPart part;
-            TestPart part2;
-            using (new TransactionScope())
-            {
-                part = _container.GetExportedValue<TransactionPolicy<TestPart>>();
-                using(new TransactionScope(TransactionScopeOption.RequiresNew))
-                  part2 = _container.GetExportedValue<TransactionPolicy<TestPart>>();
-
-            }         
+            TestPart part = _container.GetExportedValue<ThreadPolicy<TestPart>>();
+            TestPart part2 = null;
+            Task.Run(() => part2 = _container.GetExportedValue<ThreadPolicy<TestPart>>()).Wait();
             Assert.AreNotSame(part, part2);
             Assert.AreEqual(2, _collector.PartCount);
         }
 
         [TestMethod]
-        public void TwoTransactionsFourTakes()
+        public void TwoThreadsFourTakes()
         {
-            TestPart part1;
-            TestPart part2;
-            TestPart part3;
-            TestPart part4;
-            using (new TransactionScope())
-            {
-                part1 = _container.GetExportedValue<TransactionPolicy<TestPart>>();
-                part2 = _container.GetExportedValue<TransactionPolicy<TestPart>>();
-                using (new TransactionScope(TransactionScopeOption.RequiresNew))
-                {
-                    part3 = _container.GetExportedValue<TransactionPolicy<TestPart>>();
-                    part4 = _container.GetExportedValue<TransactionPolicy<TestPart>>();
-                }
-            }         
+            TestPart part1 = _container.GetExportedValue<ThreadPolicy<TestPart>>();
+            TestPart part2 = _container.GetExportedValue<ThreadPolicy<TestPart>>();
+            TestPart part3 = null;
+            TestPart part4 = null;
+            Task.Run(() =>
+                         {
+                             part3 = _container.GetExportedValue<ThreadPolicy<TestPart>>();
+                             part4 = _container.GetExportedValue<ThreadPolicy<TestPart>>();
+                         }).Wait();
             Assert.AreSame(part1, part2);
             Assert.AreSame(part3, part4);
             Assert.AreNotSame(part3, part2);
@@ -90,31 +69,41 @@ namespace MEFLifetime.Test
         }
 
         [TestMethod]
-        public void SingleTransactionWithDisposal()
+        public void SingleThreadWithDisposal()
         {
             TestPart part;
-            using (new TransactionScope())
-            {
-                part = _container.GetExportedValue<TransactionPolicy<TestPart>>();               
-            }
+            var t = new Thread(() =>
+                                   {
+                                       part = _container.GetExportedValue<ThreadPolicy<TestPart>>();
+                                   });
+            t.Start();
+            SpinWait.SpinUntil(() => !t.IsAlive);
             part = null;
+            Thread.Sleep(1000);
             GC.Collect(2, GCCollectionMode.Forced);
             GC.WaitForPendingFinalizers();
+
             Assert.AreEqual(0, _collector.PartCount);
         }
 
         [TestMethod]
-        public void TwoTransactionWithDisposal()
+        public void TwoThreadWithDisposal()
         {
             TestPart part;
             TestPart part2;
+            var t = new Thread(() =>
+                                   {
+                                       part = _container.GetExportedValue<ThreadPolicy<TestPart>>();
+                                   });
+            var t2 = new Thread(() =>
+                                    {
+                                        part2 = _container.GetExportedValue<ThreadPolicy<TestPart>>();
+                                    });
+            t.Start();
+            t2.Start();
+            SpinWait.SpinUntil(() => !t.IsAlive && !t2.IsAlive);
+            Thread.Sleep(1000);
 
-            using (new TransactionScope())
-            {
-                part = _container.GetExportedValue<TransactionPolicy<TestPart>>();
-                using (new TransactionScope(TransactionScopeOption.RequiresNew))
-                    part2 = _container.GetExportedValue<TransactionPolicy<TestPart>>();
-            }
             part = null;
             part2 = null;
             GC.Collect(2, GCCollectionMode.Forced);

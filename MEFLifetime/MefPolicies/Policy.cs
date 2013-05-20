@@ -3,40 +3,49 @@
 namespace System.ComponentModel.Composition.Extensions
 {
 
-    public abstract class Policy<T, TAffinity>  where T : class
+    /// <summary>
+    /// Base class for policies. Override with partially-closed generic with TAffinity defined.
+    /// </summary>
+    /// <typeparam name="TExport">The type of the export.</typeparam>
+    /// <typeparam name="TAffinity">The type of the context.</typeparam>
+    public abstract class Policy<TExport, TAffinity>  where TExport : class
     {
 
-        private T GetExportedValue()
-        {
-            _wasCreated = true;
-            return _storage.GetOrAdd(GetAffinity(), () => _lazyPart.Value,OnInitialize);
-        }
-
-        private readonly AffinityStorage<T, TAffinity> _storage;
+     
+        private readonly AffinityStorage<TExport, TAffinity> _storage;
 
         [Import(AllowRecomposition = true, RequiredCreationPolicy = CreationPolicy.NonShared)]
-        private Lazy<T> _lazyPart;
+        private Lazy<TExport> _lazyPart;
         
-        private bool _wasCreated;       
+        private bool _wasCreated;
+        private int _wasDisposed;
 
         protected abstract TAffinity GetAffinity();
 
-        protected virtual void OnInitialize(T obj)
+        private TExport GetExportedValue()
+        {
+            _wasCreated = true;
+            var affinity = GetAffinity();
+            if (Equals(affinity, default(TExport)))
+                return _lazyPart.Value;
+            return _storage.GetOrAdd(affinity, () => _lazyPart.Value, OnInitialize);
+        }
+
+
+        protected virtual void OnInitialize(TExport obj)
         {
             
         }
 
-        public static implicit operator T(Policy<T, TAffinity> threadPolicy)
+        public static implicit operator TExport(Policy<TExport, TAffinity> threadPolicy)
         {
             return threadPolicy.GetExportedValue();
         }
 
-        protected Policy(AffinityStorage<T, TAffinity> storage)
+        protected Policy(AffinityStorage<TExport, TAffinity> storage)
         {
             _storage = storage;
         }
-
-        private int _wasDisposed;
 
         protected void DestroyAffinity(TAffinity affinity)
         {

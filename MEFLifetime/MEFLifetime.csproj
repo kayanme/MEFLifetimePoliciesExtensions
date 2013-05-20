@@ -41,6 +41,7 @@
     <Reference Include="System.ComponentModel.Composition.Registration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Reflection.Context" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -49,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Call\CallStorage.cs" />
+    <Compile Include="Call\PerCallPolicy.cs" />
     <Compile Include="MefPolicies\AffinityStorage.cs" />
     <Compile Include="MefPolicies\Policy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

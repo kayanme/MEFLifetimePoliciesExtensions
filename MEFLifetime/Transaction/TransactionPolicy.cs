@@ -20,6 +20,11 @@ namespace System.ComponentModel.Composition.Extensions
         {
         }
 
+        public TransactionPolicy(T part) : base(null)
+        {
+            
+        }
+
         protected override Transaction GetAffinity()
         {
             if (Transaction.Current == null)

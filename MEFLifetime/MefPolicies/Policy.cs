@@ -28,6 +28,9 @@ namespace System.ComponentModel.Composition.Extensions
             var affinity = GetAffinity();
             if (Equals(affinity, default(TExport)))
                 return _lazyPart.Value;
+
+            if (_storage == null)//it have null for some unit-tests for example, when we have no need in composition container
+                throw new InvalidOperationException("Policy has no affinity storage.");
             return _storage.GetOrAdd(affinity, () => _lazyPart.Value, OnInitialize);
         }
 
@@ -49,6 +52,8 @@ namespace System.ComponentModel.Composition.Extensions
 
         protected void DestroyAffinity(TAffinity affinity)
         {
+            if (_storage == null)//it have null for some unit-tests for example, when we have no need in composition container
+                throw new InvalidOperationException("Policy has no affinity storage.");
             var wasDisposed = Interlocked.CompareExchange(ref _wasDisposed, 1, 0);
             if (_wasCreated && wasDisposed == 0)
             {

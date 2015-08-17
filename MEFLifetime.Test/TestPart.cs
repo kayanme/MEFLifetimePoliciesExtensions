@@ -5,10 +5,16 @@ namespace MEFLifetime.Test
 {
     [Export]
     [PartCreationPolicy(CreationPolicy.NonShared)]
-    public sealed class TestPart:IPartImportsSatisfiedNotification 
+    internal sealed class TestPart:IPartImportsSatisfiedNotification 
     {
-        [Import]
-        private CollectorClass _counter;       
+        
+        private readonly CollectorClass _counter;
+
+        [ImportingConstructor]
+        internal TestPart(CollectorClass counter)
+        {
+            _counter = counter;
+        }
 
         public void OnImportsSatisfied()
         {

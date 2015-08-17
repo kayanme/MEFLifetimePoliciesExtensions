@@ -38,6 +38,12 @@ namespace System.ComponentModel.Composition.Extensions
         {
           
         }
+
+        public ThreadPolicy(T part)
+            : base(null)
+        {
+            
+        }
     }
 
 }

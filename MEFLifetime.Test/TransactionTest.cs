@@ -90,6 +90,40 @@ namespace MEFLifetime.Test
         }
 
         [TestMethod]
+        public void NoTransactionOneTake()
+        {
+            TestPart part = _container.GetExportedValue<TransactionPolicy<TestPart>>();            
+            Assert.IsNotNull(part);
+            Assert.AreEqual(1, _collector.PartCount);    
+        }
+
+        [TestMethod]
+        public void NoTransaction_TwoTakes()
+        {
+            TestPart part = _container.GetExportedValue<TransactionPolicy<TestPart>>();
+            TestPart part2 = _container.GetExportedValue<TransactionPolicy<TestPart>>();
+            Assert.IsNotNull(part);
+            Assert.IsNotNull(part2);
+            Assert.AreNotSame(part,part2);
+            Assert.AreEqual(2, _collector.PartCount);
+        }
+
+        [TestMethod]
+        public void NoTransactionAndTransaction_TwoTakes()
+        {
+            TestPart part = _container.GetExportedValue<TransactionPolicy<TestPart>>();
+            using (var scope = new TransactionScope())
+            {
+                TestPart part2 = _container.GetExportedValue<TransactionPolicy<TestPart>>();
+                Assert.IsNotNull(part);
+                Assert.IsNotNull(part2);
+                Assert.AreNotSame(part, part2);
+                Assert.AreEqual(2, _collector.PartCount);
+            }
+           
+        }
+
+        [TestMethod]
         public void SingleTransactionWithDisposal()
         {
             TestPart part;

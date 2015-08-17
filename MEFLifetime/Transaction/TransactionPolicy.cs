@@ -27,8 +27,7 @@ namespace System.ComponentModel.Composition.Extensions
 
         protected override Transaction GetAffinity()
         {
-            if (Transaction.Current == null)
-                throw new InvalidOperationException();
+          
             return Transaction.Current;
         }
 

@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
+    <id>MEFLifetimeExtensions</id>
     <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <title>MEF Lifetime Extensions</title>
+    <authors>Kayan</authors>
+    <owners>Kayan</owners>
     <!--<licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>-->
     <projectUrl>https://github.com/kayanme/MEFLifetimePoliciesExtensions</projectUrl>
     <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>MEF Lifetime Policy Extensions</description>
     <releaseNotes>Per-call scoping.</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>MEF IO Lifetime</tags>

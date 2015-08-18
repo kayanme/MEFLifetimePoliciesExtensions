@@ -109,6 +109,23 @@ namespace MEFLifetime.Test
         }
 
         [TestMethod]
+        public void Transaction_TwoTakesDifferentDefinitions()
+        {
+            using (new TransactionScope())
+            {
+                var part = _container.GetExportedValue<TransactionPolicy<TestPart>>().Target;
+                var part2 = _container.GetExportedValue<TransactionPolicy<ITestPart>>().Target;
+                Assert.IsNotNull(part);
+                Assert.IsNotNull(part2);
+                Assert.AreNotSame(part, part2);
+                Assert.AreEqual(2, _collector.PartCount);
+              
+            }
+          
+      
+        }
+
+        [TestMethod]
         public void NoTransactionAndTransaction_TwoTakes()
         {
             TestPart part = _container.GetExportedValue<TransactionPolicy<TestPart>>();

@@ -9,6 +9,7 @@ namespace System.ComponentModel.Composition.Extensions
     /// If the part implements IEnlistmentNotification or ISinglePhaseNotification, enlist this part in transaction.
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    /// <remarks>It always returns different instances for different metadata, even if it describes one part.</remarks>
     [Export(typeof(TransactionPolicy<>))]   
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public sealed class TransactionPolicy<T>:Policy<T,Transaction> where T:class

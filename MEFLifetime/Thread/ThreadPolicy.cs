@@ -8,6 +8,7 @@ namespace System.ComponentModel.Composition.Extensions
     /// Returns a part bound to calling thread.
     /// </summary>
     /// <typeparam name="T">Export type</typeparam>
+    /// <remarks>It always returns different instances for different metadata, even if it describes one part.</remarks>
     [Export(typeof (ThreadPolicy<>))]  
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public sealed class ThreadPolicy<T> : Policy<T, Thread> where T : class

@@ -3,9 +3,15 @@ using System.Threading;
 
 namespace MEFLifetime.Test
 {
-    [Export]
+
+    internal interface ITestPart
+    {}
+
+
+[Export]
+[Export(typeof(ITestPart))]
     [PartCreationPolicy(CreationPolicy.NonShared)]
-    internal sealed class TestPart:IPartImportsSatisfiedNotification 
+    internal sealed class TestPart : IPartImportsSatisfiedNotification, ITestPart
     {
         
         private readonly CollectorClass _counter;

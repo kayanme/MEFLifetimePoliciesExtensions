@@ -4,10 +4,12 @@ namespace System.ComponentModel.Composition.Extensions
 {
 
     /// <summary>
-    /// Base class for policies. Override with partially-closed generic with TAffinity defined.
+    /// Base class for policies. 
+    /// Override with partially-closed generic with TAffinity defined.
     /// </summary>
     /// <typeparam name="TExport">The type of the export.</typeparam>
     /// <typeparam name="TAffinity">The type of the context.</typeparam>
+    /// <remarks>It always returns different instances for different metadata, even if it describes one part.</remarks>
     public abstract class Policy<TExport, TAffinity>  where TExport : class
     {
 
@@ -43,6 +45,14 @@ namespace System.ComponentModel.Composition.Extensions
         public static implicit operator TExport(Policy<TExport, TAffinity> threadPolicy)
         {
             return threadPolicy.GetExportedValue();
+        }
+
+        public TExport Target
+        {
+            get
+            {
+                return GetExportedValue();
+            }
         }
 
         protected Policy(AffinityStorage<TExport, TAffinity> storage)

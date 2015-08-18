@@ -34,3 +34,12 @@ class Outer
   }
   
 }
+
+Important remark - the different metadata means different part instances even for one scope!
+Consider class:
+[Export]
+[Export(typeof(IPart))]
+class Part:IPart{}
+
+If you try to get ThreadPolicy&lt;Part&gt; and ThreadPolicy&lt;IPart&gt; 
+- you'll have two different instances even in one thread.
